@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-const User = mongoose.model("User", userSchema); // Create a model from the schema
+const User = mongoose.model("User", userSchema);
 
 // UserController
 const getUser = (req, res) => {
