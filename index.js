@@ -2,11 +2,11 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const app = express();
+const UserRouter = require("./routes/UserRouter.js");
 
 app.use(cors());
 app.use(express.json());
 
-// Database
 // Database
 mongoose
   .connect(
@@ -30,11 +30,14 @@ const userSchema = new mongoose.Schema({
   },
 });
 
+const User = mongoose.model("User", userSchema); // Create a model from the schema
+
 // UserController
 const getUser = (req, res) => {
-  userSchema.find({}, (err, data) => {
+  User.find({}, (err, data) => {
     if (err) {
       console.log(err);
+      res.status(500).send("Internal Server Error");
     } else {
       res.send(data);
     }
@@ -42,9 +45,10 @@ const getUser = (req, res) => {
 };
 
 const getUserById = (req, res) => {
-  userSchema.findById(req.params.id, (err, data) => {
+  User.findById(req.params.id, (err, data) => {
     if (err) {
       console.log(err);
+      res.status(500).send("Internal Server Error");
     } else {
       res.send(data);
     }
@@ -52,9 +56,10 @@ const getUserById = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  userSchema.create(req.body, (err, data) => {
+  User.create(req.body, (err, data) => {
     if (err) {
       console.log(err);
+      res.status(500).send("Internal Server Error");
     } else {
       res.send(data);
     }
@@ -62,9 +67,10 @@ const createUser = (req, res) => {
 };
 
 const updateUser = (req, res) => {
-  userSchema.findByIdAndUpdate(req.params.id, req.body, (err, data) => {
+  User.findByIdAndUpdate(req.params.id, req.body, (err, data) => {
     if (err) {
       console.log(err);
+      res.status(500).send("Internal Server Error");
     } else {
       res.send(data);
     }
@@ -72,9 +78,10 @@ const updateUser = (req, res) => {
 };
 
 const deleteUser = (req, res) => {
-  userSchema.findByIdAndDelete(req.params.id, (err, data) => {
+  User.findByIdAndDelete(req.params.id, (err, data) => {
     if (err) {
       console.log(err);
+      res.status(500).send("Internal Server Error");
     } else {
       res.send(data);
     }
@@ -88,7 +95,7 @@ router.get("/user", getUser);
 router.get("/user/:id", getUserById);
 router.post("/user", createUser);
 router.put("/user/:id", updateUser);
-router.delete("/user/:id", deleteUser); // Changed path for DELETE request
+router.delete("/user/:id", deleteUser);
 
 app.use(router);
 app.all("/", (req, res) => {
@@ -96,7 +103,7 @@ app.all("/", (req, res) => {
   res.send("Volemmm");
 });
 
-const PORT = process.env.PORT || 5000; // Set the port
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
